@@ -4,7 +4,6 @@ format: pdf
 editor: visual
 ---
 
-
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(afex)
@@ -49,6 +48,7 @@ report_BF_and_error <- function(BF_in, sci_not = TRUE, hyp = "alt"){
 }
 
 ```
+
 ```{r, include=FALSE}
 #Create probable response variable, as we are using the uncertain condition
 training <- training %>%
@@ -70,6 +70,7 @@ stage2 <- subset(stage2, select = -c(s1_trial, s3_trial))
 stage3 <- filter(training, block > 10)
 stage3 <- subset(stage3, select = -c(s2_trial, s3_trial))
 ```
+
 ```{r, include=FALSE}
 #some exclusion criteria
 block6 <- filter(stage1, block == 6) %>%
@@ -99,6 +100,7 @@ MA_training <- training %>%
   summarise(mean_prob_response = mean(prob_response, na.rm = TRUE),
             se_accuracy = sd(prob_response, na.rm = TRUE)/sqrt(length(prob_response)))
 ```
+
 ```{r, echo=FALSE}
 ggplot(MA_training) +
   geom_point(mapping = aes(x = block, y = mean_prob_response, color = condition)) +
@@ -128,6 +130,7 @@ print(bay_ANOVA_train)
 bay_ANOVA_train_int <- bay_ANOVA_train[4]/bay_ANOVA_train[3]
 print(bay_ANOVA_train_int)
 ```
+
 ```{r, include = FALSE}
 # Marginal means
 ANOVA_train_cond <-emmeans(ANOVA_train, ~condition)
@@ -139,6 +142,7 @@ print(train_interaction)
 train_interaction2 <- emmeans(ANOVA_train, ~ condition|block)
 print(train_interaction2)
 ```
+
 ```{r, include = FALSE}
 #Simple main effect of group
 SME_group <- train %>%
@@ -148,6 +152,7 @@ SME_group <- train %>%
   adjust_pvalue(method = "bonferroni")
 print(SME_group)
 ```
+
 ```{r, include=FALSE}
 #Simple comparisons for group
 pw_ANOVA <- pairs(train_interaction2, adj = "bonferroni")
@@ -155,7 +160,7 @@ pw_ANOVA <- summary(pw_ANOVA)
 print(pw_ANOVA)
 ```
 
-A mixed model ANOVA, with the between subjects factor *group* and the within subjects factor *block* found both main effects significant (Group: `r apa(ANOVA_train, effect = "condition")`, `r report_BF_and_error(bay_ANOVA_train[2])`; Block:`r apa(ANOVA_train, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_train[1])`) and the interaction between them (`r apa(ANOVA_train, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_train_int[1])`), all of them with extreme evidence for the alternative hypothesis. Simple main effects showed an effect of the group in the blocks 2-7 (*F*(`r SME_group[3,3]` , `r SME_group[3,4]`) > `r SME_group[3,5]`, *p* < `r SME_group[3,9]`). In all the cases, the differences were between group U-U with the C-C and the C-U groups. 
+A mixed model ANOVA, with the between subjects factor *group* and the within subjects factor *block* found both main effects significant (Group: `r apa(ANOVA_train, effect = "condition")`, `r report_BF_and_error(bay_ANOVA_train[2])`; Block:`r apa(ANOVA_train, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_train[1])`) and the interaction between them (`r apa(ANOVA_train, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_train_int[1])`), all of them with extreme evidence for the alternative hypothesis. Simple main effects showed an effect of the group in the blocks 2-7 (*F*(`r SME_group[3,3]` , `r SME_group[3,4]`) \> `r SME_group[3,5]`, *p* \< `r SME_group[3,9]`). In all the cases, the differences were between group U-U with the C-C and the C-U groups.
 
 # Stage 1
 
@@ -177,6 +182,7 @@ print(bay_ANOVA_resp_s1)
 bay_ANOVA_resp_s1_int <- bay_ANOVA_resp_s1[4]/bay_ANOVA_resp_s1[3]
 print(bay_ANOVA_resp_s1_int)
 ```
+
 ```{r, include = FALSE}
 #Simple main effect of group
 SME_ANOVAs2_group <- resp_s1 %>%
@@ -186,6 +192,7 @@ SME_ANOVAs2_group <- resp_s1 %>%
   adjust_pvalue(method = "bonferroni")
 print(SME_ANOVAs2_group)
 ```
+
 ```{r, include = FALSE}
 # Marginal means
 ANOVA_s1_cond <-emmeans(ANOVA_resp_s1, ~condition|block)
@@ -214,6 +221,7 @@ print(bay_ANOVA_resp_s2)
 bay_ANOVA_resp_s2_int <- bay_ANOVA_resp_s2[4]/bay_ANOVA_resp_s2[3]
 print(bay_ANOVA_resp_s2_int)
 ```
+
 ```{r, include = FALSE}
 #Simple main effect of block
 SME_ANOVAs2_block <- resp_s2 %>%
@@ -231,6 +239,7 @@ SME_ANOVAs2_group <- resp_s2 %>%
   adjust_pvalue(method = "bonferroni")
 print(SME_ANOVAs2_group)
 ```
+
 ```{r, include=FALSE}
 #Simple comparisons for group
 ANOVA_s2_cond <-emmeans(ANOVA_resp_s2, ~condition|block)
@@ -239,8 +248,7 @@ pw_ANOVA_s2 <- summary(pw_ANOVA_s2)
 print(pw_ANOVA_s2)
 ```
 
-
-In stage 2, the C-C group continued with a high accuracy, and group U-U, kept increasing in accuracy. However, group C-U showed a decrease in the accuracy, to levels similar to the U-U group. A mixed model ANOVA did not find a significant effect of the *block* (`r apa(ANOVA_resp_s2, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_resp_s2[1])`), but both the main effect of the *group* and the*groupXblock* interaction were significant(Group: `r apa(ANOVA_resp_s2, effect = "condition")`, `r report_BF_and_error(bay_ANOVA_resp_s2[2])`; Interaction: `r apa(ANOVA_resp_s2, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_resp_s2_int[1])`). Simple main effects showed an effect of the condition in all blocks (*F* (2, 22) > 7.301, *p* < .001). Simple main effects of condition showed that there were significant differences in block 7, but not in any more of them. Simple comparisons showed that, in block 7, group U-U was significantly different from group C-C (*t*(`r pw_ANOVA_s2[2, 5]`) = `r pw_ANOVA_s2[2, 6]`, *p* = `r pw_ANOVA_s2[2, 7]`) and group C-U (*t*(`r pw_ANOVA_s2[3, 5]`) = `r pw_ANOVA_s2[3, 6]`, *p* = `r pw_ANOVA_s2[3, 7]`). 
+In stage 2, the C-C group continued with a high accuracy, and group U-U, kept increasing in accuracy. However, group C-U showed a decrease in the accuracy, to levels similar to the U-U group. A mixed model ANOVA did not find a significant effect of the *block* (`r apa(ANOVA_resp_s2, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_resp_s2[1])`), but both the main effect of the *group* and the*group x block* interaction were significant (Group: `r apa(ANOVA_resp_s2, effect = "condition")`, `r report_BF_and_error(bay_ANOVA_resp_s2[2])`; Interaction: `r apa(ANOVA_resp_s2, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_resp_s2_int[1])`). Simple main effects showed an effect of the condition in all blocks except for block 9. Simple main effects of condition showed that there were significant differences in block 7, but not in any more of them. Simple comparisons showed that, in block 7, group U-U was significantly different from group C-C (*t*(`r pw_ANOVA_s2[2, 5]`) = `r pw_ANOVA_s2[2, 6]`, *p* = `r pw_ANOVA_s2[2, 7]`) and group C-U (*t*(`r pw_ANOVA_s2[3, 5]`) = `r pw_ANOVA_s2[3, 6]`, *p* = `r pw_ANOVA_s2[3, 7]`).
 
 # Stage 3
 
@@ -262,6 +270,7 @@ print(bay_ANOVA_s3)
 bay_ANOVA_s3_int <- bay_ANOVA_s3[4]/bay_ANOVA_s3[3]
 print(bay_ANOVA_s3_int)
 ```
+
 ```{r, include = FALSE}
 # Marginal means
 ANOVA_s3_block <-emmeans(ANOVA_s3, ~block)
@@ -269,7 +278,8 @@ pw_ANOVA_S3_block <- pairs(ANOVA_s3_block, adj = "bonferroni")
 pw_ANOVA_S3_block<- summary(pw_ANOVA_S3_block)
 print(pw_ANOVA_S3_block)
 ```
-On the third stage, the ANOVA showed only a significant effect of the *block* (`r apa(ANOVA_s3, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_s3[1])`), but not of the *condition* (`r apa(ANOVA_s3, effect = "condition" )`, `r report_BF_and_error(bay_ANOVA_s3[2])`), but not of their interaction (`r apa(ANOVA_s3, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_s3_int[1])`).
+
+On the third stage, the ANOVA showed only a significant effect of the *block* (`r apa(ANOVA_s3, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_s3[1])`), but not of the *condition* (`r apa(ANOVA_s3, effect = "condition" )`, `r report_BF_and_error(bay_ANOVA_s3[2])`), nor of their interaction (`r apa(ANOVA_s3, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_s3_int[1])`).
 
 ## Stage 3 frecuent trials
 
@@ -277,12 +287,14 @@ On the third stage, the ANOVA showed only a significant effect of the *block* (`
 #select the rare trials
 stage3_frecuent <- filter(stage3, !((cue1 == "A") & (cue2 == "Y")) | ((cue1 == "B") & (cue2 == "X")))
 ```
+
 ```{r, include=FALSE}
 M_s3_frec <- stage3_frecuent %>% 
   group_by(condition, block) %>%
   summarise(mean_acc = mean(correct_answer, na.rm = TRUE),
             se_accuracy = sd(correct_answer, na.rm = TRUE)/sqrt(length(correct_answer)))
 ```
+
 ```{r, echo=FALSE}
 ggplot(M_s3_frec) +
   geom_point(mapping = aes(x = block, y = mean_acc, color = condition)) +
@@ -292,6 +304,7 @@ ggplot(M_s3_frec) +
   scale_y_continuous(name="Proportion of probable responses") +
   labs(title = "Mean proportion of probable responses for the frecuent pairs in Stage 3")
 ```
+
 ```{r, include=FALSE}
 #ANOVA
 resp_s3_frec <- stage3_frecuent %>%
@@ -319,12 +332,14 @@ On the frequent trials (AY-O2, BX - O1) in phase three, the ANOVA showed only a 
 #select the rare trials
 stage3_rare <- filter(stage3, ((cue1 == "A") & (cue2 == "Y")) | ((cue1 == "B") & (cue2 == "X")))
 ```
+
 ```{r, include=FALSE}
 M_s3_rare <- stage3_rare %>% 
   group_by(condition, block) %>%
   summarise(mean_acc = mean(correct_answer, na.rm = TRUE),
             se_accuracy = sd(correct_answer, na.rm = TRUE)/sqrt(length(correct_answer)))
 ```
+
 ```{r, echo=FALSE}
 ggplot(M_s3_rare) +
   geom_point(mapping = aes(x = block, y = mean_acc, color = condition)) +
@@ -334,6 +349,7 @@ ggplot(M_s3_rare) +
   scale_y_continuous(name="Proportion of probable responses") +
   labs(title = "Mean proportion of probable responses for the infrecuent pairs in Stage 3")
 ```
+
 ```{r, include=FALSE}
 #ANOVA
 resp_s3_rare <- stage3_rare %>%
@@ -352,6 +368,7 @@ print(bay_ANOVA_s3_rare)
 bay_ANOVA_s3_rare_int <- bay_ANOVA_s3_rare[4]/bay_ANOVA_s3_rare[3]
 print(bay_ANOVA_s3_rare_int)
 ```
+
 ```{r, include = FALSE}
 #Simple main effect of block
 SME_s3_rare_block <- resp_s3_rare %>%
@@ -369,6 +386,7 @@ SME_s3_rare_group <- resp_s3_rare %>%
   adjust_pvalue(method = "bonferroni")
 print(SME_s3_rare_group)
 ```
+
 ```{r, include=FALSE}
 #Simple comparisons for group
 ANOVA_s3_rare_cond <-emmeans(ANOVA_s3_rare, ~condition|block)
@@ -377,5 +395,4 @@ pw_ANOVA_s3_rare <- summary(pw_ANOVA_s3_rare)
 print(pw_ANOVA_s3_rare)
 ```
 
-On the infrequent trials (AY-O2, BX - O1) in phase three, the ANOVA showed only a significant effect of the *block* (`r apa(ANOVA_s3_rare, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_s3_rare[1])`), but not of the *condition* (`r apa(ANOVA_s3_rare, effect = "condition" )`,  `r report_BF_and_error(bay_ANOVA_s3_rare[2])`). The interaction was significant  (`r apa(ANOVA_s3_rare, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_s3_rare_int[1])`). However, simple main effects showed no effect of the condition in any of the blocks. 
-
+On the infrequent trials (AY-O2, BX - O1) in phase three, the ANOVA showed only a significant effect of the *block* (`r apa(ANOVA_s3_rare, effect = "block" )`, `r report_BF_and_error(bay_ANOVA_s3_rare[1])`), but not of the *condition* (`r apa(ANOVA_s3_rare, effect = "condition" )`, `r report_BF_and_error(bay_ANOVA_s3_rare[2])`). The interaction was significant (`r apa(ANOVA_s3_rare, effect = "condition:block")`, `r report_BF_and_error(bay_ANOVA_s3_rare_int[1])`). However, simple main effects showed no effect of the condition in any of the blocks.
